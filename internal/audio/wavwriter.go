@@ -2,6 +2,7 @@ package audio
 
 import (
 	"encoding/binary"
+	"math"
 	"os"
 )
 
@@ -74,6 +75,23 @@ func newWAV(filename string, sampleRate int, durationSec int) (*WAVWriter, error
 // writeSilence записывает тишину
 func (w *WAVWriter) writeSilence() error {
 	buf := make([]byte, w.numSamples*2) // 2 байта на сэмпл
+	_, err := w.f.Write(buf)
+	return err
+}
+
+func (w *WAVWriter) WriteSine(freq float64) error {
+	buf := make([]byte, w.numSamples*2) // 2 байта на сэмпл (16-bit)
+	sampleRate := 44100.0               // фиксируем, если в newWAV всегда 44100
+	phase := 0.0
+
+	for i := 0; i < w.numSamples; i++ {
+		sample := math.Sin(2 * math.Pi * freq * phase / sampleRate)
+		val := int16(sample * 32767) // float64 -> int16
+		buf[2*i] = byte(val)
+		buf[2*i+1] = byte(val >> 8)
+		phase++
+	}
+
 	_, err := w.f.Write(buf)
 	return err
 }
