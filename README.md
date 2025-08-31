@@ -1,6 +1,5 @@
 # Baba O`Riley... Sorry.
-Экспериментальный синтезатор/секвенсер на Go, который воспроизводит события (ноты) из JSON и сохраняет результат в WAV-файл.
-Название вдохновлено композицией **Baba O'Riley - The Who**
+Experimental synthesizer/sequencer in Go that plays events (notes) from JSON and saves the output to a WAV file. The name is inspired by the song **Baba O'Riley by The Who**.
 
 ## Disclaimer
 While developing this application, I in no way intended to offend the artistic legacy of **The Who**.
