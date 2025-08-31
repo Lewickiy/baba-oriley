@@ -2,37 +2,31 @@ package audio
 
 import (
 	"encoding/binary"
-	"math"
 	"os"
 )
 
-// WAVWriter представляет объект для записи WAV файлов.
-// Хранит дескриптор файла и количество сэмплов
+// WAVWriter represents an object for writing WAV files
 type WAVWriter struct {
-	f          *os.File
-	numSamples int
+	f          *os.File // file descriptor
+	numSamples int      // total number of samples
 }
 
-// CreateSilenceWav создаёт WAV файл с тишиной указанной длительности.
-// filename - имя файла.
-// sampleRate - частота дискретизации (например, 44100).
-// durationSec - длительность в секундах.
-// Возвращает ошибку, если не удалось создать файл.
-func CreateSilenceWav(filename string, sampleRate int, durationSec int) error {
-	writer, err := newWAV(filename, sampleRate, durationSec)
-	if err != nil {
+// writeOrFail writes data to a file and returns an error if it occurs
+func writeOrFail(f *os.File, data any) error {
+	switch v := data.(type) {
+	case []byte:
+		_, err := f.Write(v)
 		return err
+	default:
+		return binary.Write(f, binary.LittleEndian, v)
 	}
-
-	err = writer.writeSilence()
-	if err != nil {
-		return err
-	}
-	return writer.close()
 }
 
-// newWAV создаёт файл WAV с 16-bit PCM, 1 канал, sampleRate Гц
-func newWAV(filename string, sampleRate int, durationSec int) (*WAVWriter, error) {
+// NewWAV creates a WAV file with 16-bit PCM, 1 channel (mono), at the given sample rate.
+// filename - output file name (without extension, stored in "out/" folder)
+// sampleRate - sampling rate in Hz
+// durationSec - duration of the file in seconds
+func NewWAV(filename string, sampleRate int, durationSec int) (*WAVWriter, error) {
 	pesPath := "out/" + filename + ".wav"
 	f, err := os.Create(pesPath)
 	if err != nil {
@@ -40,31 +34,54 @@ func newWAV(filename string, sampleRate int, durationSec int) (*WAVWriter, error
 	}
 
 	numSamples := sampleRate * durationSec
-
-	// заголовок WAV (RIFF)
-	// 44 байта стандартного заголовка
 	dataSize := numSamples * 2 // 16-bit mono
 	fileSize := 36 + dataSize
 
 	// RIFF chunk
-	f.Write([]byte("RIFF"))
-	binary.Write(f, binary.LittleEndian, uint32(fileSize))
-	f.Write([]byte("WAVE"))
+	if err := writeOrFail(f, []byte("RIFF")); err != nil {
+		return nil, err
+	}
+	if err := writeOrFail(f, uint32(fileSize)); err != nil {
+		return nil, err
+	}
+	if err := writeOrFail(f, []byte("WAVE")); err != nil {
+		return nil, err
+	}
 
 	// fmt subchunk
-	f.Write([]byte("fmt "))
-	binary.Write(f, binary.LittleEndian, uint32(16)) // Subchunk1Size
-	binary.Write(f, binary.LittleEndian, uint16(1))  // PCM
-	binary.Write(f, binary.LittleEndian, uint16(1))  // Mono
-	binary.Write(f, binary.LittleEndian, uint32(sampleRate))
+	if err := writeOrFail(f, []byte("fmt ")); err != nil {
+		return nil, err
+	}
+	if err := writeOrFail(f, uint32(16)); err != nil { // Subchunk1Size
+		return nil, err
+	}
+	if err := writeOrFail(f, uint16(1)); err != nil { // PCM
+		return nil, err
+	}
+	if err := writeOrFail(f, uint16(1)); err != nil { // Mono
+		return nil, err
+	}
+	if err := writeOrFail(f, uint32(sampleRate)); err != nil {
+		return nil, err
+	}
 	byteRate := sampleRate * 2
-	binary.Write(f, binary.LittleEndian, uint32(byteRate))
-	binary.Write(f, binary.LittleEndian, uint16(2))  // BlockAlign
-	binary.Write(f, binary.LittleEndian, uint16(16)) // BitsPerSample
+	if err := writeOrFail(f, uint32(byteRate)); err != nil {
+		return nil, err
+	}
+	if err := writeOrFail(f, uint16(2)); err != nil { // BlockAlign
+		return nil, err
+	}
+	if err := writeOrFail(f, uint16(16)); err != nil { // BitsPerSample
+		return nil, err
+	}
 
 	// data subchunk
-	f.Write([]byte("data"))
-	binary.Write(f, binary.LittleEndian, uint32(dataSize))
+	if err := writeOrFail(f, []byte("data")); err != nil {
+		return nil, err
+	}
+	if err := writeOrFail(f, uint32(dataSize)); err != nil {
+		return nil, err
+	}
 
 	return &WAVWriter{
 		f:          f,
@@ -72,31 +89,18 @@ func newWAV(filename string, sampleRate int, durationSec int) (*WAVWriter, error
 	}, nil
 }
 
-// writeSilence записывает тишину
-func (w *WAVWriter) writeSilence() error {
-	buf := make([]byte, w.numSamples*2) // 2 байта на сэмпл
-	_, err := w.f.Write(buf)
-	return err
-}
-
-func (w *WAVWriter) WriteSine(freq float64) error {
-	buf := make([]byte, w.numSamples*2) // 2 байта на сэмпл (16-bit)
-	sampleRate := 44100.0               // фиксируем, если в newWAV всегда 44100
-	phase := 0.0
-
-	for i := 0; i < w.numSamples; i++ {
-		sample := math.Sin(2 * math.Pi * freq * phase / sampleRate)
-		val := int16(sample * 32767) // float64 -> int16
-		buf[2*i] = byte(val)
-		buf[2*i+1] = byte(val >> 8)
-		phase++
+// WriteSamples writes an array of int16 samples to the WAV file
+// The samples are written in little-endian byte order
+func (w *WAVWriter) WriteSamples(samples []int16) error {
+	buf := make([]byte, len(samples)*2)
+	for i, s := range samples {
+		buf[2*i] = byte(s)
+		buf[2*i+1] = byte(s >> 8) // little-endian
 	}
-
-	_, err := w.f.Write(buf)
-	return err
+	return writeOrFail(w.f, buf)
 }
 
-// close закрывает файл
-func (w *WAVWriter) close() error {
+// Close closes the WAV file
+func (w *WAVWriter) Close() error {
 	return w.f.Close()
 }
