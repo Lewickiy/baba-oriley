@@ -22,13 +22,13 @@ baba-oriley/
 │   ├── instruments/  # Instruments (Kick, etc.)
 │   └── player/       # Logic for loading and playing events
 └── cmd/
-└── main.go       # Entry point
+    └── main.go       # Entry point
 ```
 ## Example JSON (assets/demo.json)
 ```json
 [
-{"start": 17.70, "duration": 0.59, "note": 72, "velocity": 105, "instrument": "arp3"},
-{"start": 9.60, "duration": 0.28, "note": 72, "velocity": 105, "instrument": "arp1"}
+  {"start": 17.70, "duration": 0.59, "note": 72, "velocity": 105, "instrument": "arp3"},
+  {"start": 9.60, "duration": 0.28, "note": 72, "velocity": 105, "instrument": "arp1"}
 ]
 ```
 
