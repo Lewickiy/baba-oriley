@@ -259,13 +259,6 @@
     "instrument": "arp1"
   },
   {
-    "start": 18.90,
-    "duration": 0.28,
-    "note": 77,
-    "velocity": 105,
-    "instrument": "arp1"
-  },
-  {
     "start": 18.15,
     "duration": 0.28,
     "note": 74,
@@ -287,12 +280,87 @@
     "instrument": "arp1"
   },
   {
-    "start": 19.25,
+    "start": 18.90,
+    "duration": 0.28,
+    "note": 77,
+    "velocity": 105,
+    "instrument": "arp1"
+  },
+  {
+    "start": 19.05,
     "duration": 0.28,
     "note": 74,
     "velocity": 105,
     "instrument": "arp1"
   },
+  {
+    "start": 20.55,
+    "duration": 0.28,
+    "note": 76,
+    "velocity": 105,
+    "instrument": "arp1"
+  },
+  {
+    "start": 22.35,
+    "duration": 0.28,
+    "note": 74,
+    "velocity": 105,
+    "instrument": "arp1"
+  },
+  {
+    "start": 22.95,
+    "duration": 0.28,
+    "note": 74,
+    "velocity": 105,
+    "instrument": "arp1"
+  },
+  {
+    "start": 23.25,
+    "duration": 0.28,
+    "note": 74,
+    "velocity": 105,
+    "instrument": "arp1"
+  },
+  {
+    "start": 23.55,
+    "duration": 0.28,
+    "note": 74,
+    "velocity": 105,
+    "instrument": "arp1"
+  },
+  {
+    "start": 23.40,
+    "duration": 0.28,
+    "note": 77,
+    "velocity": 105,
+    "instrument": "arp1"
+  },
+  {
+    "start": 23.70,
+    "duration": 0.28,
+    "note": 77,
+    "velocity": 105,
+    "instrument": "arp1"
+  },
+  {
+    "start": 22.35,
+    "duration": 0.28,
+    "note": 74,
+    "velocity": 105,
+    "instrument": "arp1"
+  },
+  {
+    "start": 23.10,
+    "duration": 0.28,
+    "note": 72,
+    "velocity": 105,
+    "instrument": "arp1"
+  },
+
+//  11 sec
+
+
+
   {
     "start": 0.00,
     "duration": 0.28,
