@@ -40,6 +40,15 @@ func GetInstrument(name string) Instrument {
 	case strings.HasPrefix(name, "kick"):
 		inst = &Kick{id: getNextID()}
 		log.Printf("[Factory] Created Kick instrument for name '%s', object address: %p\n", name, inst)
+	case strings.HasPrefix(name, "snare"):
+		inst = &Snare{id: getNextID()}
+		log.Printf("[Factory] Created Snare instrument for name '%s', object address: %p\n", name, inst)
+	case strings.HasPrefix(name, "bass"):
+		inst = &BassSynth{id: getNextID()}
+		log.Printf("[Factory] Created BassSynth instrument for name '%s', object address: %p\n", name, inst)
+	case strings.HasPrefix(name, "synth"):
+		inst = &PolySynth{id: getNextID()}
+		log.Printf("[Factory] Created PolySynth instrument for name '%s', object address: %p\n", name, inst)
 	case strings.HasPrefix(name, "arp"):
 		inst = &ArpSynth{id: getNextID()}
 		log.Printf("[Factory] Created ArpSynth instrument for name '%s', object address: %p\n", name, inst)

@@ -3,6 +3,7 @@ package audio
 import (
 	"encoding/binary"
 	"os"
+	"path/filepath"
 )
 
 // WAVWriter represents an object for writing WAV files
@@ -27,7 +28,11 @@ func writeOrFail(f *os.File, data any) error {
 // sampleRate - sampling rate in Hz
 // durationSec - duration of the file in seconds
 func NewWAV(filename string, sampleRate int, durationSec int) (*WAVWriter, error) {
-	pesPath := "out/" + filename + ".wav"
+	pesPath := filepath.Join("out", filename+".wav")
+	if err := os.MkdirAll(filepath.Dir(pesPath), 0o755); err != nil {
+		return nil, err
+	}
+
 	f, err := os.Create(pesPath)
 	if err != nil {
 		return nil, err
