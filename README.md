@@ -7,7 +7,7 @@ If the quality of the performance of **Baba O’Riley** seemed inappropriate —
 
 ## Features
 - Playback of events (notes) from `JSON`.
-- Support for different instruments (e.g., `Kick`).
+- Support for different instruments (`Kick`, `Snare`, `BassSynth`, `PolySynth`, `ArpSynth`).
 - Rendering to mono `WAV` (16-bit PCM).
 - Multithreaded generation: each instrument is processed in its own goroutine.
 
@@ -49,7 +49,6 @@ and be registered in `instruments`.
 Example: the Kick (bass drum) is synthesized as a decaying sine wave.
 
 ## TODO
-- Add more instruments (snare, bass, synth).
 - Implement stereo support.
 - MIDI import/export.
 - Real-time player.
